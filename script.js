@@ -43,6 +43,7 @@ const gameBoard=(function(){
         console.log(board[0],board[1],board[2]);
         console.log(board[3],board[4],board[5]);
         console.log(board[6],board[7],board[8]);
+        console.log("-----------------------------");
     }
     return {getBoard,setBoard, printConsole, checkWin, reset}
 })();
@@ -59,7 +60,16 @@ function player(userMarker){
 }
 
 const human=player('X');
-const bot=player('O');
+const bot=(function(){
+    let {increaseScore,getScore,getMarker} = player('O');
+
+    let selectBox=()=>{
+        let tempArr=(gameBoard.getBoard()).map((val,i)=>{if(val==''){return i}else {return null}}).filter((e)=>{return e!=null});
+        let randomChoice=Math.floor(Math.random() * ((tempArr.length-1) - 0 + 1)) + 0;
+        return tempArr[randomChoice];
+    }
+    return {increaseScore,getScore,getMarker,selectBox};
+})();
 
 const controller=(function(){
     var turn='X';
@@ -67,19 +77,27 @@ const controller=(function(){
         let userMarker=user.getMarker();
         if(userMarker==turn){
             if(!gameBoard.setBoard(index,userMarker))
-                console.log("Choose a valid block")
+                alert("Choose a valid block")
             else{
+                board.addIcon(index,userMarker);
                 if(gameBoard.checkWin(userMarker)){
-                    console.log(user.getMarker()+" WON")
                     user.increaseScore();
-                    gameBoard.reset();
+                    setTimeout(()=>{
+                        alert(user.getMarker()+" WON")
+                        gameBoard.reset();
+                        board.resetBoard();
+                    },500)
                 }
                 turn = (turn=='X') ? 'O' : 'X';
             }
             
         }else{
-            console.log('Please wait your turn.');
+            alert('Please wait your turn.');
         }
+        if(turn=='O')
+            setTimeout(()=>{
+                markEntry(bot,bot.selectBox())
+            },500)
     }
 
     const add=function(){
@@ -107,7 +125,8 @@ let board=(function(){
 
     const addIcon=(i,icon)=>{
         let temp=document.querySelector(`.board div[data-id="${i}"]`);
-        temp.innerHTML=icon;
+        let svgIcon=(icon=='X') ? X:O;
+        temp.innerHTML=svgIcon;
     }
 
     return {createBoard,resetBoard, addIcon}
