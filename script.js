@@ -10,16 +10,35 @@ const gameBoard=(function(){
         board[index]=marker;
         return true;
     }
+    const checkWin=(marker)=>{
+        if(
+            (board[0]==marker && board[1]==marker && board[2]==marker)
+            || (board[3]==marker && board[4]==marker && board[5]==marker)
+            || (board[6]==marker && board[7]==marker && board[8]==marker)
+            || (board[0]==marker && board[3]==marker && board[6]==marker)
+            || (board[1]==marker && board[4]==marker && board[7]==marker)
+            || (board[2]==marker && board[5]==marker && board[8]==marker)
+            || (board[0]==marker && board[4]==marker && board[8]==marker)
+            || (board[2]==marker && board[4]==marker && board[6]==marker)
+        )
+            return true;
+        return false;
+    }
+    const reset=()=>{
+        for(let i=0;i<9;i++){
+            board[i]='';
+        }
+    }
     const printConsole=function(){
         console.log(board[0],board[1],board[2]);
         console.log(board[3],board[4],board[5]);
         console.log(board[6],board[7],board[8]);
     }
-    return {getBoard,setBoard, printConsole}
+    return {getBoard,setBoard, printConsole, checkWin, reset}
 })();
 
 function player(userMarker){
-    const score='';
+    var score=0;
     const marker=userMarker;
     const increaseScore=()=>{
         score++;
@@ -39,8 +58,14 @@ const controller=(function(){
         if(userMarker==turn){
             if(!gameBoard.setBoard(index,userMarker))
                 console.log("Choose a valid block")
-            else
+            else{
+                if(gameBoard.checkWin(userMarker)){
+                    console.log(user.getMarker()+" WON")
+                    user.increaseScore();
+                    gameBoard.reset();
+                }
                 turn = (turn=='X') ? 'O' : 'X';
+            }
             
         }else{
             console.log('Please wait your turn.');
