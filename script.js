@@ -83,21 +83,23 @@ const controller=(function(){
                 if(gameBoard.checkWin(userMarker)){
                     user.increaseScore();
                     setTimeout(()=>{
-                        alert(user.getMarker()+" WON")
+                        let message=(userMarker=='X')?'You have ':'Bot has ';
+                        alert(`${message} WON the game.`)
                         gameBoard.reset();
                         board.resetBoard();
-                    },500)
+                        board.updateScore();
+                    },200)
+                    turn='O';
                 }
                 turn = (turn=='X') ? 'O' : 'X';
-            }
-            
+            }   
         }else{
             alert('Please wait your turn.');
         }
         if(turn=='O')
             setTimeout(()=>{
                 markEntry(bot,bot.selectBox())
-            },500)
+            },200)
     }
 
     const add=function(){
@@ -108,7 +110,12 @@ const controller=(function(){
 
 // -------------------------------------- UI ------------------------------------------
 
-let boxes=document.querySelector('div.board')
+let boxes=document.querySelector('div.board');
+let humanScoreBoard=(document.querySelectorAll('div.controls div')[0]).querySelector('span');
+let botScoreBoard=(document.querySelectorAll('div.controls div')[2]).querySelector('span');
+let resetBtn=document.querySelectorAll('div.controls div')[1];
+
+
 let board=(function(){
     const createBoard=()=>{
         for(let j=0;j<9;j++){
@@ -129,11 +136,21 @@ let board=(function(){
         temp.innerHTML=svgIcon;
     }
 
-    return {createBoard,resetBoard, addIcon}
+    const updateScore=()=>{
+        humanScoreBoard.textContent=human.getScore();
+        botScoreBoard.textContent=bot.getScore();
+    }
+
+    return {createBoard,resetBoard, addIcon,updateScore}
 })();
 board.createBoard();
+board.updateScore();
 
 
-boxes.addEventListener('click',(e)=>{
+boxes.addEventListener('click',e=>{
     controller.markEntry(human,e.target.dataset.id)
+});
+resetBtn.addEventListener('click',e=>{
+    board.resetBoard();
+    gameBoard.reset();
 });

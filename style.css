@@ -57,12 +57,13 @@ body{
             div:nth-child(1),div:nth-child(3){
                 flex: auto;
                 width: 75px;
+                color: var(--secondary-text);
                 
                 span{
-                    color: var(--secondary-text);
-                    font-size: 16px;
+                    color: var(--primary-text);
+                    font-size: 18px;
                 }
-                font-size: 18px;
+                font-size: 16px;
             }
             div:nth-child(2){
                 flex: 3;
